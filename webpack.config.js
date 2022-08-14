@@ -1,11 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
-const dotenv = require('dotenv').config({
-    path: path.join(__dirname, '.env'),
-})
 
 module.exports = (env) => {
     return {
@@ -28,14 +23,6 @@ module.exports = (env) => {
                     },
                 },
                 {
-                    test: /\.tsx?$/,
-                    loader: 'ts-loader',
-                    options: {
-                        appendTsSuffixTo: [/\.vue$/],
-                    },
-                    exclude: /node_modules/,
-                },
-                {
                     test: /\.vue$/,
                     loader: 'vue-loader',
                     options: {
@@ -46,15 +33,15 @@ module.exports = (env) => {
                     },
                 },
                 {
-                    test: /\.css$/,
-                    use: [MiniCssExtractPlugin.loader, {
-                        loader: 'css-loader',
-                        options: {
-                            importLoaders: 1
-                        }
-                    },
-                        'postcss-loader'
-                    ]
+                    test: /\.s[ac]ss$/gi,
+                    use: [
+                        // Creates `style` nodes from JS strings
+                        'style-loader',
+                        // Translates CSS into CommonJS
+                        'css-loader',
+                        // Compiles Sass to CSS
+                        'sass-loader',
+                    ],
                 },
                 {
                     test: /\.(png|jpg|svg)$/i,
@@ -70,12 +57,12 @@ module.exports = (env) => {
             alias: {
                 '@': path.resolve(__dirname, 'src/'),
             },
-            extensions: ['.tsx', '.ts', '.js'],
+            extensions: ['.js','vue'],
         },
         plugins: [
             new VueLoaderPlugin(),
             new webpack.DefinePlugin({
-                'process.env': JSON.stringify(dotenv.parsed),
+                __VUE_OPTIONS_API__: false,
             }),
         ],
         devServer: {
