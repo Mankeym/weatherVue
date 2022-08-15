@@ -144,7 +144,6 @@ export default {
     }
     const selectHundler = (e) => {
       count.value = e.target.id
-      console.log(count)
     }
     return {
       displayVisibility,
