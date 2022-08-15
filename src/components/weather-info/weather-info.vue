@@ -4,59 +4,75 @@
       <div class="weather-info__card-container">
         <button
           class="weather-info__card-menu-button"
+          :class="displayVisibility ? 'active' : ''"
           @click="menuHandler"
         >
-          X
-        </button>
-        <div class="weather-info__card">
           <div
-            class="weather-info__card-menu"
-            :class="displayVisibility ? 'weather-info__card-menu_activated' : ''"
+            class="weather-info__card-menu-button-line-container"
           >
-            <input
-              v-model="input"
-              class="weather-info__input"
-              type="text"
-              placeholder="write location"
-            >
-            <button
-              class="btn"
-              type="button"
-              @click="addLocation"
-            >
-              Добавить город
-            </button>
-
+            <line class="weather-info__menu-btn-line" />
+            <line class="weather-info__menu-btn-line" />
+            <line class="weather-info__menu-btn-line" />
+          </div>
+        </button>
+        <div
+          v-if="displayVisibility"
+          class="weather-info__card-menu"
+          :class="displayVisibility ? 'weather-info__card-menu_activated' : ''"
+        >
+          <input
+            v-model="input"
+            class="weather-info__input"
+            type="text"
+            placeholder="write location"
+          >
+          <button
+            class="btn weather-info__submit-btn"
+            type="button"
+            @click="addLocation"
+          >
+            Добавить город
+          </button>
+          <div
+            v-for="(item,index) in citiesWeather"
+            :id="index"
+            class="weather-info__cities-container"
+            @dragover="onDragOver"
+          >
             <div
-              v-for="(item,index) in citiesWeather"
-              :id="index"
-              class="weather-info__cities-container"
-              @dragover="onDragOver"
+              :key="index"
+              draggable="true"
+              class="weather-info__cities"
+              @dragstart="onDragStart($event, index)"
             >
-              <div
-                :key="index"
-                draggable="true"
-                class="weather-info__cities"
-                @dragstart="onDragStart($event, index)"
+              <p>{{ item.name }}</p>
+              <button
+                :id="item.id"
+                @click="deleteLocation"
               >
-                <p>{{ item.name }}</p>
-                <button
-                  :id="item.id"
-                  @click="deleteLocation"
-                >
-                  Delete
-                </button>
-              </div>
+                Delete
+              </button>
+              <button
+                :id="index"
+                @click="selectHundler"
+              >
+                Выбрать
+              </button>
             </div>
           </div>
+        </div>
+        <div
+          v-if="!displayVisibility"
+          class="weather-info__card"
+        >
           <h1 class="weather-info__card-title">
-            {{ citiesWeather[0].name }}
+            {{ citiesWeather[count].name }}
           </h1>
           <p class="weather-info__card-temp">
-            {{ citiesWeather[0].main.temp }}
+            {{ Math.round(citiesWeather[count].main.temp - 273.15) + '℃' }}
           </p>
           <p class="weather-info__card-description">
-            {{ citiesWeather[0].weather[0].description }}
+            {{ citiesWeather[count].weather[0].description }}
           </p>
         </div>
       </div>
@@ -78,6 +94,7 @@ export default {
     const menuHandler = () => {
       displayVisibility.value = !displayVisibility.value
     }
+    let count = ref(0)
 
     const setValue = () => {
       window.localStorage.setItem(
@@ -94,7 +111,8 @@ export default {
             .then((res) => {
               citiesWeather.value.push(res.data)
               setValue()
-            })
+              input.value = ''
+            }).catch(error => alert(error))
       }
     }
     let draggedItemIndex = null
@@ -124,6 +142,10 @@ export default {
       })
       setValue()
     }
+    const selectHundler = (e) => {
+      count.value = e.target.id
+      console.log(count)
+    }
     return {
       displayVisibility,
       menuHandler,
@@ -132,7 +154,9 @@ export default {
       input,
       addLocation,
       deleteLocation,
-      citiesWeather
+      citiesWeather,
+      count,
+      selectHundler,
     }
   }
 }

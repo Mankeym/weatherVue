@@ -13,6 +13,7 @@
   align-items: center;
   &__card-container {
     width: 100%;
+    position: relative;
   }
   &__card {
     box-sizing: border-box;
@@ -27,19 +28,67 @@
   }
   &__card-menu-button {
     outline: none;
-    border: 1px solid black;
+    border: none;
     background: transparent;
     border-radius: 10%;
     cursor: pointer;
+    position: absolute;
+    right: 30px;
+    top: 10px;
+    z-index: 2;
+    &.active {
+      .weather-info__menu-btn-line{
+        &:nth-child(1){
+          top: 28px;
+          left: 0;
+          transform: rotateZ(177deg);
+          opacity: 0;
+        }
+        &:nth-child(2) {
+          transform: rotateZ(135deg);
+          left: 0;
+          top: 28px;
+        }
+        &:nth-child(3) {
+          top: 28px;
+          left: 0;
+          transform: rotateZ(-315deg);
+        }
+
+      }
+
+    }
+
+
+  }
+  &__card-menu-button-line-container{
+    position: relative;
+    .weather-info__menu-btn-line {
+      transition: .6s;
+      position: absolute;
+      width: 27px;
+      height: 4px;
+      border-radius: 4px;
+      background: black;
+      left: 50%;
+      transform: translateX(-50%);
+      &:nth-child(1){
+        top: 19px;
+      }
+      &:nth-child(2){
+        top: 27px;
+      }
+      &:nth-child(3){
+        top: 35px;
+      }
+    }
   }
   &__card-menu {
     display: none;
   }
   &__card-menu_activated{
     display: flex;
-    position: absolute;
-    top: 0;
-    left: 0;
+    border: 1px solid black;
     height: 100%;
     width: 100%;
     border-radius: 10px;
@@ -48,9 +97,14 @@
     padding: 50px;
     box-sizing: border-box;
   }
-}
-.weather-info__card {
-  &__title {
-    color: blue;
+  &__submit-btn {
+    margin-top: 20px;
+    width: 200px;
+    border: 1px solid black;
+    cursor: pointer;
+  }
+  &__cities {
+    display: flex;
   }
 }
+
